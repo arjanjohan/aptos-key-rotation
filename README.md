@@ -2,6 +2,8 @@
 
 This repository provides a step-by-step guide for **rotating an account's authentication key** on Aptos using the CLI. Through a simple example, it demonstrates how to upgrade a deployed package after performing key rotation.
 
+The scripts in this repository are based on the guide in the [Aptos documentation on key rotation](https://aptos.dev/en/build/guides/key-rotation).
+
 ## Introduction
 
 Aptos Move accounts have a public address, an authentication key, a public key, and a private key. The public address is permanent, always matching the account's initial authentication key, which is derived from the original private key.
