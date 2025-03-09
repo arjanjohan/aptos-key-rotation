@@ -1,6 +1,6 @@
 # Aptos Account Key Rotation Tutorial
 
-This repository provides a step-by-step guide for **rotating an account's authentication key** on Aptos using the CLI. Through a simple example, it demonstrates how to upgrade a deployed package after performing key rotation. In a more in-depth example, the guide explains how to rotate the authentication key from and to a **Ledger device**.
+This repository provides a step-by-step guide for **rotating an account's authentication key** on Aptos. Through a simple example, it demonstrates how to upgrade a deployed package after performing key rotation. In a more in-depth example, the guide explains how to rotate the authentication key from and to a **Ledger device**.
 
 The scripts in this repository are based on the guide in the [Aptos documentation on key rotation](https://aptos.dev/en/build/guides/key-rotation) and the [documentation on using Ledger via the Aptos CLI](https://aptos.dev/en/build/cli/trying-things-on-chain/ledger).
 
@@ -31,7 +31,6 @@ The Aptos account model facilitates the unique ability to rotate an account's pr
 ├── scripts/basic       # Scripts for the basic key rotation guide
 ├── scripts/ledger      # Scripts for the Ledger key rotation guide
 ├── scripts/config.sh   # Network and Ledger configuration
-
 ├── sources/            # Move smart contract source files
 ├── Move.toml           # Move package manifest
 ```
