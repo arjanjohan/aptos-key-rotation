@@ -1,11 +1,11 @@
 #!/bin/bash
-# Setup hot wallet signer
+# Setup hot wallet signer for later rotation to Ledger
 
 # Exit if any command fails
 set -e
 
 # Load configuration
-source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/../config.sh"
 echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
 
 # Make required directories
@@ -36,7 +36,7 @@ aptos init \
     --assume-yes \
     --network $NETWORK \
     --private-key-file ./keys/private-key-a \
-    --profile test-profile-1
+    --profile ledger-rotation-hot # TODO: change to a more descriptive name
 
 echo "📝 Hot wallet address: $ADDRESS_A"
 echo "🔐 Retrieving authentication key..."
@@ -48,3 +48,4 @@ AUTH_KEY=$(aptos move view \
 echo "🔑 Authentication key: $AUTH_KEY"
 
 echo "✅ Hot wallet setup completed successfully!"
+echo "ℹ️ This account will later be rotated to use a Ledger hardware wallet"

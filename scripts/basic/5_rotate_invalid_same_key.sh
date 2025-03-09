@@ -14,4 +14,4 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-2 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: Invalid arguments: New public key cannot be the same as the current public key"
+echo "❌ Error received as expected: "$ERROR_OUTPUT

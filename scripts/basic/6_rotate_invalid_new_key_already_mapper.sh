@@ -5,7 +5,7 @@
 set -e
 
 # Load configuration
-source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/../config.sh"
 echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
 
 echo "🔑 Generating third hot wallet key with vanity prefix 0xccc..."
@@ -28,7 +28,7 @@ INIT_RESULT=$(aptos init \
 echo "✅ Initialized profile test-profile-3 successfully"
 
 echo "⚠️ Attempting invalid key rotation (key already mapped in OriginatingAddress table)..."
-echo "📝 This operation is expected to fail because the authentication key is already mapped"
+echo "📝 This operation is expected to fail because the authentication key is already mapped (ENEW_AUTH_KEY_ALREADY_MAPPED)"
 
 # Capture the error output but allow the command to fail
 ERROR_OUTPUT=$(aptos account rotate-key \
@@ -38,4 +38,4 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-3 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: The new authentication key already has an entry in the OriginatingAddress table"
+echo "❌ Error received as expected: "$ERROR_OUTPUT

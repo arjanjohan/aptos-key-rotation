@@ -14,7 +14,7 @@ ROTATE_RESULT=$(aptos account rotate-key \
 echo "✅ First rotation successful"
 
 echo "⚠️ Attempting invalid key rotation for third account..."
-echo "📝 This operation is expected to fail due to invalid originating address"
+echo "📝 This operation is expected to fail due to invalid originating address (EINVALID_ORIGINATING_ADDRESS)"
 
 # Capture the error output but allow the command to fail
 ERROR_OUTPUT=$(aptos account rotate-key \
@@ -24,4 +24,4 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-3 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: EINVALID_ORIGINATING_ADDRESS - The expected originating address is different from the originating address on-chain"
+echo "❌ Error received as expected: "$ERROR_OUTPUT

@@ -5,7 +5,7 @@
 set -e
 
 # Load configuration
-source "$(dirname "$0")/config.sh"
+source "$(dirname "$0")/../config.sh"
 echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
 
 # Create second hot wallet

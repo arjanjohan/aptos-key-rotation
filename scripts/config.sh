@@ -6,3 +6,4 @@ NETWORK="devnet"
 FULLNODE_URL="https://fullnode.devnet.aptoslabs.com"
 
 # Other common configuration can be added here
+DERIVATION_INDEX=1000
