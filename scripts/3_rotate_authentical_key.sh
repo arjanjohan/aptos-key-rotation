@@ -4,6 +4,10 @@
 # Exit if any command fails
 set -e
 
+# Load configuration
+source "$(dirname "$0")/config.sh"
+echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
+
 # Create second hot wallet
 echo "🔑 Generating second hot wallet key with vanity prefix 0xbbb..."
 GENERATE_RESULT=$(aptos key generate \
@@ -42,7 +46,7 @@ echo "🔍 Retrieving new authentication key..."
 AUTH_KEY_RESULT=$(aptos move view \
     --args address:$ADDRESS_A \
     --function-id 0x1::account::get_authentication_key \
-    --url https://fullnode.devnet.aptoslabs.com)
+    --url $FULLNODE_URL)
 
 AUTH_KEY=$(echo "$AUTH_KEY_RESULT" | jq -r '.Result[0]')
 echo "$AUTH_KEY" > ./addresses/address_b
@@ -52,13 +56,13 @@ echo "🔍 Checking originating address for original authentication key..."
 ORIG_ADDRESS_A_RESULT=$(aptos move view \
     --args address:$ADDRESS_A \
     --function-id 0x1::account::originating_address \
-    --url https://fullnode.devnet.aptoslabs.com)
+    --url $FULLNODE_URL)
 
 echo "🔍 Checking originating address for new authentication key..."
 ORIG_ADDRESS_B_RESULT=$(aptos move view \
     --args address:$AUTH_KEY \
     --function-id 0x1::account::originating_address \
-    --url https://fullnode.devnet.aptoslabs.com)
+    --url $FULLNODE_URL)
 
 ORIG_ADDRESS_B=$(echo "$ORIG_ADDRESS_B_RESULT" | jq -r '.Result[0].vec[0]')
 if [ -n "$ORIG_ADDRESS_B" ] && [ "$ORIG_ADDRESS_B" != "null" ]; then

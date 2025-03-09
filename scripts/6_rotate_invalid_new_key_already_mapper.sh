@@ -4,6 +4,10 @@
 # Exit if any command fails
 set -e
 
+# Load configuration
+source "$(dirname "$0")/config.sh"
+echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
+
 echo "🔑 Generating third hot wallet key with vanity prefix 0xccc..."
 GENERATE_RESULT=$(aptos key generate \
     --assume-yes \
@@ -17,7 +21,7 @@ echo "📝 Generated key with address: $ADDRESS_C"
 echo "🚀 Initializing new profile with generated key..."
 INIT_RESULT=$(aptos init \
     --assume-yes \
-    --network devnet \
+    --network $NETWORK \
     --private-key-file ./keys/private-key-c \
     --profile test-profile-3)
 

@@ -31,5 +31,5 @@ if [ -z "$OBJECT_ADDRESS" ]; then
     exit 1
 fi
 
-echo "$OBJECT_ADDRESS" > ./deployment/hello_world_object_address.txt
+echo "$OBJECT_ADDRESS" > ./addresses/hello_world_object_address.txt
 echo "✅ Contract published successfully at object address: $OBJECT_ADDRESS"

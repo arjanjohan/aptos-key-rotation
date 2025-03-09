@@ -4,6 +4,10 @@
 # Exit if any command fails
 set -e
 
+# Load configuration
+source "$(dirname "$0")/config.sh"
+echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
+
 export ADDRESS_A=$(cat ./addresses/address_a)
 echo "📝 Using address: $ADDRESS_A"
 
@@ -11,7 +15,7 @@ echo "🔍 Checking current originating address..."
 ORIG_ADDRESS_BEFORE=$(aptos move view \
     --args address:$ADDRESS_A \
     --function-id 0x1::account::originating_address \
-    --url https://fullnode.devnet.aptoslabs.com)
+    --url $FULLNODE_URL)
 
 EMPTY_VEC=$(echo "$ORIG_ADDRESS_BEFORE" | jq -r '.Result[0].vec | length')
 if [ "$EMPTY_VEC" -ne 0 ]; then
@@ -36,7 +40,7 @@ echo "🔍 Verifying updated originating address..."
 ORIG_ADDRESS_AFTER=$(aptos move view \
     --args address:$ADDRESS_A \
     --function-id 0x1::account::originating_address \
-    --url https://fullnode.devnet.aptoslabs.com)
+    --url $FULLNODE_URL)
 
 AUTH_KEY=$(echo "$ORIG_ADDRESS_AFTER" | jq -r '.Result[0].vec[0]')
 if [ -n "$AUTH_KEY" ] && [ "$AUTH_KEY" != "null" ]; then

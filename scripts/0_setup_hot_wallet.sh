@@ -4,6 +4,10 @@
 # Exit if any command fails
 set -e
 
+# Load configuration
+source "$(dirname "$0")/config.sh"
+echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
+
 # Make required directories
 echo "📁 Creating required directories..."
 mkdir -p ./addresses
@@ -23,14 +27,14 @@ echo "$ADDRESS_A" > ./addresses/address_a
 echo "🔍 Looking up address for generated key..."
 aptos account lookup-address \
     --public-key-file ./keys/private-key-a.pub \
-    --url https://fullnode.devnet.aptoslabs.com || true
+    --url $FULLNODE_URL || true
 echo "ℹ️ This error is expected since the account doesn't exist on-chain yet"
 
 # Initialize aptos with the private key
 echo "🚀 Initializing Aptos CLI with generated key..."
 aptos init \
     --assume-yes \
-    --network devnet \
+    --network $NETWORK \
     --private-key-file ./keys/private-key-a \
     --profile test-profile-1
 
@@ -39,7 +43,7 @@ echo "🔐 Retrieving authentication key..."
 AUTH_KEY=$(aptos move view \
     --args address:$ADDRESS_A \
     --function-id 0x1::account::get_authentication_key \
-    --url https://fullnode.devnet.aptoslabs.com \
+    --url $FULLNODE_URL \
     | jq -r '.Result[0]')
 echo "🔑 Authentication key: $AUTH_KEY"
 

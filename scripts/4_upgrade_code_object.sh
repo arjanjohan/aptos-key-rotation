@@ -7,13 +7,13 @@ set -e
 echo "🚀 Upgrading contract using rotated key (test-profile-2)..."
 
 # Check if object address file exists
-if [ ! -f "./deployment/hello_world_object_address.txt" ]; then
+if [ ! -f "./addresses/hello_world_object_address.txt" ]; then
     echo "❌ Object address file not found. Run script 2 first."
     exit 1
 fi
 
 # Get the object address
-OBJECT_ADDRESS=$(cat ./deployment/hello_world_object_address.txt)
+OBJECT_ADDRESS=$(cat ./addresses/hello_world_object_address.txt)
 if [ -z "$OBJECT_ADDRESS" ]; then
     echo "❌ Invalid object address"
     exit 1

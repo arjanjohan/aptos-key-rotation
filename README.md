@@ -21,9 +21,11 @@ The Aptos account model facilitates the unique ability to rotate an account's pr
 
 ```
 .
-├── scripts/            # Setup and key rotation scripts
-├── addresses/               # Generated keys and addresses (will be created)
+├── addresses/          # Generated keys and addresses (will be created)
 ├── keys/               # Generated keys and addresses (will be created)
+├── scripts/            # Setup and key rotation scripts
+├── sources/            # Move smart contract source files
+├── Move.toml           # Move package manifest
 ```
 
 ## Key Rotation Concepts
@@ -145,7 +147,15 @@ This script:
 
 ## Network
 
-This tutorial is configured to work with Aptos devnet by default. To use a different network, modify the network parameter in the scripts.
+This tutorial is configured to work with Aptos devnet by default. To use a different network, modify the network settings in the `scripts/config.sh` file:
+
+```bash
+# Network configuration
+NETWORK="devnet"
+FULLNODE_URL="https://fullnode.devnet.aptoslabs.com"
+```
+
+*Note: When you change these values to work with other networks like testnet, the CLI won't faucet new accounts directly. This means the scripts might fail without some modifications.*
 
 ## Troubleshooting
 
