@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup hot wallet signer
+# Demonstrate invalid key rotation: new key is already mapped in the OriginatingAddress table
 
 # Exit if any command fails
 set -e
@@ -12,7 +12,10 @@ echo "🔑 Generating third hot wallet key with vanity prefix 0xccc..."
 GENERATE_RESULT=$(aptos key generate \
     --assume-yes \
     --output-file ./keys/private-key-c \
-    --vanity-prefix 0xccc)
+    --vanity-prefix 0xccc) || {
+    echo "❌ Key generation failed: ${GENERATE_RESULT}"
+    exit 1
+}
 
 # Extract the account address from the key generation output
 ADDRESS_C=$(echo "$GENERATE_RESULT" | grep -o '"Account Address:": "[^"]*"' | cut -d'"' -f4)
@@ -23,7 +26,10 @@ INIT_RESULT=$(aptos init \
     --assume-yes \
     --network $NETWORK \
     --private-key-file ./keys/private-key-c \
-    --profile test-profile-3)
+    --profile test-profile-3) || {
+    echo "❌ Profile initialization failed: ${INIT_RESULT}"
+    exit 1
+}
 
 echo "✅ Initialized profile test-profile-3 successfully"
 
@@ -38,4 +44,9 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-3 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: "$ERROR_OUTPUT
+if ! echo "$ERROR_OUTPUT" | grep -q "ENEW_AUTH_KEY_ALREADY_MAPPED"; then
+    echo "❌ Expected ENEW_AUTH_KEY_ALREADY_MAPPED but got: $ERROR_OUTPUT"
+    exit 1
+fi
+
+echo "✅ Error received as expected: $ERROR_OUTPUT"

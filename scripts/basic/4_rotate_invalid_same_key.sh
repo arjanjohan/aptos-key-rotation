@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup hot wallet signer
+# Demonstrate invalid key rotation: new key is the same as the current key
 
 # Exit if any command fails
 set -e
@@ -14,4 +14,9 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-2 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: "$ERROR_OUTPUT
+if ! echo "$ERROR_OUTPUT" | grep -q "New public key cannot be the same as the current public key"; then
+    echo "❌ Expected same-key error but got: $ERROR_OUTPUT"
+    exit 1
+fi
+
+echo "✅ Error received as expected: $ERROR_OUTPUT"

@@ -1,5 +1,5 @@
 #!/bin/bash
-# Setup hot wallet signer
+# Demonstrate invalid key rotation: current key is mapped to a different originating address
 
 # Exit if any command fails
 set -e
@@ -9,7 +9,10 @@ ROTATE_RESULT=$(aptos account rotate-key \
     --assume-yes \
     --new-private-key-file ./keys/private-key-c \
     --profile test-profile-2 \
-    --save-to-profile test-profile-4)
+    --save-to-profile test-profile-4) || {
+    echo "❌ Key rotation failed: ${ROTATE_RESULT}"
+    exit 1
+}
 
 echo "✅ First rotation successful"
 
@@ -24,4 +27,9 @@ ERROR_OUTPUT=$(aptos account rotate-key \
     --profile test-profile-3 \
     --skip-saving-profile 2>&1 || true)
 
-echo "❌ Error received as expected: "$ERROR_OUTPUT
+if ! echo "$ERROR_OUTPUT" | grep -q "EINVALID_ORIGINATING_ADDRESS"; then
+    echo "❌ Expected EINVALID_ORIGINATING_ADDRESS but got: $ERROR_OUTPUT"
+    exit 1
+fi
+
+echo "✅ Error received as expected: $ERROR_OUTPUT"

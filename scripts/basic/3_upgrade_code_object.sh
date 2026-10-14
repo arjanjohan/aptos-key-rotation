@@ -8,7 +8,7 @@ echo "🚀 Upgrading contract using rotated key (test-profile-2)..."
 
 # Check if object address file exists
 if [ ! -f "./addresses/hello_world_object_address.txt" ]; then
-    echo "❌ Object address file not found. Run script 2 first."
+    echo "❌ Object address file not found. Run script 1 first."
     exit 1
 fi
 

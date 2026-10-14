@@ -12,7 +12,7 @@ The Aptos account model facilitates the unique ability to rotate an account's pr
 
 ## Prerequisites
 
-- [Aptos CLI](https://aptos.dev/cli-tools/aptos-cli-tool/install-aptos-cli)
+- [Aptos CLI](https://aptos.dev/build/cli)
 - Bash shell environment
 - Git
 - jq (for JSON parsing)
@@ -26,8 +26,8 @@ The Aptos account model facilitates the unique ability to rotate an account's pr
 
 ```
 .
-├── addresses/          # Generated keys and addresses (will be created)
-├── keys/               # Generated keys and addresses (will be created)
+├── addresses/          # Generated addresses (will be created)
+├── keys/               # Generated keys (will be created)
 ├── scripts/basic       # Scripts for the basic key rotation guide
 ├── scripts/ledger      # Scripts for the Ledger key rotation guide
 ├── scripts/config.sh   # Network and Ledger configuration
@@ -43,7 +43,7 @@ This tutorial demonstrates several important concepts:
 
 2. **OriginatingAddress Table**: A reverse lookup table that maps authentication keys to account addresses, ensuring a one-to-one mapping.
 
-3. **Best Practices**: Setting originating addresses for new accounts and handling key rotations properly.
+3. **`set_originating_address` is disabled**: The framework used to let a new account register its own authentication key in the `OriginatingAddress` table via `account::set_originating_address`. That function now always aborts with `ESET_ORIGINATING_ADDRESS_DISABLED` (potential poisoning from account abstraction). A key only enters the table through a proven rotation, which is why the scripts below don't set it.
 
 ## Setup and Demonstration Steps
 
@@ -58,34 +58,23 @@ bash ./scripts/basic/0_setup_hot_wallet.sh
 This script:
 - Creates necessary directories
 - Generates a hot wallet key with vanity prefix 0xaaa
-- Looks up the address (which fails as expected since the account doesn't exist yet)
+- Looks up the address (returns the address derived from the key, since the key has no `OriginatingAddress` entry yet)
 - Initializes Aptos CLI with the generated key
 - Retrieves and displays the authentication key
 
-#### 1. Set Originating Address
+#### 1. Deploy Object
 
 ```bash
-bash ./scripts/basic/1_set_originating_address.sh
-```
-
-This script:
-- Checks the current originating address (empty at first)
-- Sets the originating address using `account::set_originating_address`
-- Verifies the updated originating address
-
-#### 2. Deploy Object
-
-```bash
-bash ./scripts/basic/2_deploy_object.sh
+bash ./scripts/basic/1_deploy_object.sh
 ```
 
 This script:
 - Deploys an object using the initialized account
 
-#### 3. Rotate Authentication Key
+#### 2. Rotate Authentication Key
 
 ```bash
-bash ./scripts/basic/3_rotate_authentical_key.sh
+bash ./scripts/basic/2_rotate_authentication_key.sh
 ```
 
 This script:
@@ -93,54 +82,54 @@ This script:
 - Rotates the authentication key of the first account to the new key
 - Shows profile configurations before and after rotation
 - Retrieves the new authentication key
-- Checks originating addresses for both keys
+- Checks originating addresses for both keys (the original key has none, the new key maps to the first account)
 
-#### 4. Upgrade Code Object
+#### 3. Upgrade Code Object
 
 ```bash
-bash ./scripts/basic/4_upgrade_code_object.sh
+bash ./scripts/basic/3_upgrade_code_object.sh
 ```
 
 This script:
 - Upgrades the previously deployed code object using the rotated key
 
-#### 5. Demonstrate Invalid Rotation (Same Key)
+#### 4. Demonstrate Invalid Rotation (Same Key)
 
 ```bash
-bash ./scripts/basic/5_rotate_invalid_same_key.sh
+bash ./scripts/basic/4_rotate_invalid_same_key.sh
 ```
 
 This script:
 - Attempts to rotate to the same key
-- Demonstrates the expected error (cannot rotate to the same key)
+- Demonstrates the expected error (cannot rotate to the same key). The CLI rejects this before submitting a transaction.
 
-#### 6. Demonstrate Invalid Rotation (Key Already Mapped)
+#### 5. Demonstrate Invalid Rotation (Key Already Mapped)
 
 ```bash
-bash ./scripts/basic/6_rotate_invalid_new_key_already_mapper.sh
+bash ./scripts/basic/5_rotate_invalid_new_key_already_mapped.sh
 ```
 
 This script:
 - Generates a third hot wallet key with vanity prefix 0xccc
 - Initializes a new profile with this key
-- Attempts to rotate to a key that's already mapped in the OriginatingAddress table
+- Attempts to rotate to the second key, which the rotation in script 2 mapped to the first account in the OriginatingAddress table
 - Demonstrates the expected error (ENEW_AUTH_KEY_ALREADY_MAPPED)
 
-#### 7. Demonstrate Invalid Rotation (Invalid Originating Address)
+#### 6. Demonstrate Invalid Rotation (Invalid Originating Address)
 
 ```bash
-bash ./scripts/basic/7_rotate_invalid_invalid_originating_address.sh
+bash ./scripts/basic/6_rotate_invalid_invalid_originating_address.sh
 ```
 
 This script:
-- Rotates the authentication key of the first account to use the third key
-- Attempts to rotate the third account's key
+- Rotates the authentication key of the first account to use the third key, which maps the third key to the first account
+- Attempts to rotate the third account's key, which is now mapped to a different account
 - Demonstrates the expected error (EINVALID_ORIGINATING_ADDRESS)
 
-#### 8. Cleanup
+#### 7. Cleanup
 
 ```bash
-bash ./scripts/basic/8_cleanup.sh
+bash ./scripts/basic/7_cleanup.sh
 ```
 
 This script:
@@ -161,30 +150,20 @@ This script:
 - Initializes the Aptos CLI with this hot wallet
 - Prepares the account for key rotation
 
-#### 1. Set Originating Address
+#### 1. Deploy Object with Hot Wallet
 
 ```bash
-bash ./scripts/ledger/1_set_originating_address.sh
-```
-
-This script:
-- Sets the originating address for the hot wallet
-- Prepares the account for proper key rotation
-
-#### 2. Deploy Object with Hot Wallet
-
-```bash
-bash ./scripts/ledger/2_deploy_object.sh
+bash ./scripts/ledger/1_deploy_object.sh
 ```
 
 This script:
 - Deploys a Move package using the hot wallet
 - Establishes the hot wallet as the package owner
 
-#### 3. Rotate to Ledger
+#### 2. Rotate to Ledger
 
 ```bash
-bash ./scripts/ledger/3_rotate_to_ledger.sh
+bash ./scripts/ledger/2_rotate_to_ledger.sh
 ```
 
 This script:
@@ -193,10 +172,10 @@ This script:
 - Demonstrates the key rotation process with hardware wallet
 - Creates a new profile for the Ledger-secured account
 
-#### 4. Upgrade Object with Ledger
+#### 3. Upgrade Object with Ledger
 
 ```bash
-bash ./scripts/ledger/4_upgrade_object_with_ledger.sh
+bash ./scripts/ledger/3_upgrade_object_with_ledger.sh
 ```
 
 This script:
@@ -204,10 +183,10 @@ This script:
 - Verifies that the Ledger-secured account maintains the same permissions
 - Demonstrates that key rotation preserves account capabilities
 
-#### 5. Rotate to Hot Wallet
+#### 4. Rotate to Hot Wallet
 
 ```bash
-bash ./scripts/ledger/5_rotate_to_hot_wallet.sh
+bash ./scripts/ledger/4_rotate_to_hot_wallet.sh
 ```
 
 This script:
@@ -215,10 +194,10 @@ This script:
 - Useful for operations that exceed Ledger memory limitations
 - Creates a temporary hot wallet profile
 
-#### 6. Upgrade Object with Hot Wallet
+#### 5. Upgrade Object with Hot Wallet
 
 ```bash
-bash ./scripts/ledger/6_upgrade_object_with_hot_wallet.sh
+bash ./scripts/ledger/5_upgrade_object_with_hot_wallet.sh
 ```
 
 This script:
@@ -226,10 +205,10 @@ This script:
 - Demonstrates that the rotated hot wallet maintains the same permissions
 - Shows how to handle larger transactions that might not fit on Ledger
 
-#### 7. Cleanup
+#### 6. Cleanup
 
 ```bash
-bash ./scripts/ledger/7_cleanup.sh
+bash ./scripts/ledger/6_cleanup.sh
 ```
 
 This script:
@@ -241,13 +220,13 @@ This script:
 ## Key Rotation Security Considerations
 
 - **One-to-One Mapping**: Best practice is to maintain a one-to-one mapping between authentication keys and account addresses.
-- **Originating Address**: Always set the originating address after generating a new account.
+- **Originating Address**: `set_originating_address` is disabled, so a new account's key can't be registered in the OriginatingAddress table up front. It only gets an entry after a proven rotation.
 - **Private Keys**: Keep your private keys secure and never share them.
 - **Proven Rotations**: Use proven key rotations to ensure proper updates to the OriginatingAddress table.
 
 ## Network
 
-This tutorial is configured to work with Aptos devnet by default. To use a different network, modify the network settings in the `scripts/../config.sh` file:
+This tutorial is configured to work with Aptos devnet by default. To use a different network, modify the network settings in the `scripts/config.sh` file:
 
 ```bash
 # Network configuration
@@ -262,16 +241,15 @@ FULLNODE_URL="https://fullnode.devnet.aptoslabs.com"
 If you encounter any issues:
 
 1. Ensure Aptos CLI is properly installed and in your PATH
-2. Check that all scripts have execute permissions (`chmod +x scripts/*.sh`)
-3. Verify you have sufficient test tokens for transactions
-4. Clear the `keys/` and `addresses/` directories and start fresh if needed
+2. Verify you have sufficient test tokens for transactions
+3. Clear the `keys/` and `addresses/` directories and start fresh if needed
 
 ## Understanding Error Cases
 
 The scripts intentionally demonstrate several error cases:
-- Attempting to rotate to the same key (script 5)
-- Attempting to rotate to a key already mapped in the OriginatingAddress table (script 6)
-- Attempting to rotate with an invalid originating address (script 7)
+- Attempting to rotate to the same key (script 4)
+- Attempting to rotate to a key already mapped in the OriginatingAddress table (script 5)
+- Attempting to rotate with an invalid originating address (script 6)
 
 These error cases help illustrate the security mechanisms in the Aptos account model.
 

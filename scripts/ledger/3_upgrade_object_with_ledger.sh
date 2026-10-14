@@ -10,7 +10,7 @@ echo "🌐 Using network: $NETWORK with URL: $FULLNODE_URL"
 
 # Check if object address file exists
 if [ ! -f "./addresses/deployed_object.txt" ]; then
-    echo "❌ Object address file not found. Run script 2 first."
+    echo "❌ Object address file not found. Run script 1 first."
     exit 1
 fi
 
