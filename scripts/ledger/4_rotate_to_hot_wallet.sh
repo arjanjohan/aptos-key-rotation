@@ -17,7 +17,10 @@ echo "🔑 Generating new hot wallet key with vanity prefix 0xbbb..."
 GENERATE_RESULT=$(aptos key generate \
     --assume-yes \
     --output-file ./keys/private-key-b \
-    --vanity-prefix 0xbbb)
+    --vanity-prefix 0xbbb) || {
+    echo "❌ Key generation failed: ${GENERATE_RESULT}"
+    exit 1
+}
 
 # Extract the new account address (not used, just for information)
 NEW_ADDRESS=$(echo "$GENERATE_RESULT" | grep -o '"Account Address:": "[^"]*"' | cut -d'"' -f4)
@@ -59,8 +62,14 @@ echo "🔍 Key rotation transaction hash: $TX_HASH"
 
 # Compare profiles to verify rotation
 echo "📊 Comparing profiles to verify rotation..."
-LEDGER_PROFILE=$(aptos config show-profiles --profile ledger-rotation-ledger)
-HOT_PROFILE=$(aptos config show-profiles --profile ledger-rotation-temp-hot)
+LEDGER_PROFILE=$(aptos config show-profiles --profile ledger-rotation-ledger) || {
+    echo "❌ Failed to show profile: ${LEDGER_PROFILE}"
+    exit 1
+}
+HOT_PROFILE=$(aptos config show-profiles --profile ledger-rotation-temp-hot) || {
+    echo "❌ Failed to show profile: ${HOT_PROFILE}"
+    exit 1
+}
 
 LEDGER_PUBLIC_KEY=$(echo "$LEDGER_PROFILE" | grep -o '"public_key": "[^"]*"' | cut -d'"' -f4)
 HOT_PUBLIC_KEY=$(echo "$HOT_PROFILE" | grep -o '"public_key": "[^"]*"' | cut -d'"' -f4)

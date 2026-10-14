@@ -50,8 +50,14 @@ echo "🔍 Key rotation transaction hash: $TX_HASH"
 
 # Compare profiles to verify rotation
 echo "📊 Comparing profiles to verify rotation..."
-HOT_PROFILE=$(aptos config show-profiles --profile ledger-rotation-hot)
-LEDGER_PROFILE=$(aptos config show-profiles --profile ledger-rotation-ledger)
+HOT_PROFILE=$(aptos config show-profiles --profile ledger-rotation-hot) || {
+    echo "❌ Failed to show profile: ${HOT_PROFILE}"
+    exit 1
+}
+LEDGER_PROFILE=$(aptos config show-profiles --profile ledger-rotation-ledger) || {
+    echo "❌ Failed to show profile: ${LEDGER_PROFILE}"
+    exit 1
+}
 
 HOT_PUBLIC_KEY=$(echo "$HOT_PROFILE" | grep -o '"public_key": "[^"]*"' | cut -d'"' -f4)
 LEDGER_PUBLIC_KEY=$(echo "$LEDGER_PROFILE" | grep -o '"public_key": "[^"]*"' | cut -d'"' -f4)
