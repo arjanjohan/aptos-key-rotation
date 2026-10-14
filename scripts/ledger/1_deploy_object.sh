@@ -6,13 +6,6 @@ set -e
 
 echo "🚀 Publishing contract from ledger-rotation-hot..."
 
-# Compile the contract
-echo "📝 Compiling Move modules..."
-COMPILE_RESULT=$(aptos move compile --named-addresses hello_blockchain=ledger-rotation-hot 2>&1) || {
-    echo "❌ Compilation failed: ${COMPILE_RESULT}"
-    exit 1
-}
-
 # Deploy the contract
 echo "📦 Deploying contract..."
 DEPLOY_RESULT=$(aptos move deploy-object \

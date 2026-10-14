@@ -6,13 +6,6 @@ set -e
 
 echo "🚀 Publishing contract from test-profile-1 (0xaaa)..."
 
-# Compile the contract
-echo "📝 Compiling Move modules..."
-COMPILE_RESULT=$(aptos move compile --named-addresses hello_blockchain=test-profile-1 2>&1) || {
-    echo "❌ Compilation failed: ${COMPILE_RESULT}"
-    exit 1
-}
-
 # Publish to network
 echo "📦 Publishing to network..."
 DEPLOY_RESULT=$(aptos move deploy-object \

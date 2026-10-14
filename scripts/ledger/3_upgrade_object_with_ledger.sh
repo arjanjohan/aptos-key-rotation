@@ -31,13 +31,6 @@ echo "  4. Blind signing is enabled in the Aptos app settings"
 echo ""
 read -p "Press Enter when your Ledger is ready..."
 
-# Compile the contract
-echo "📝 Compiling Move modules..."
-COMPILE_RESULT=$(aptos move compile --named-addresses hello_blockchain=ledger-rotation-ledger 2>&1) || {
-    echo "❌ Compilation failed: ${COMPILE_RESULT}"
-    exit 1
-}
-
 # Upgrade deployed contract using Ledger
 echo "📦 Upgrading contract using Ledger..."
 echo "⚠️ You will need to approve the transaction on your Ledger device"

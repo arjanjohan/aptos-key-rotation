@@ -19,13 +19,6 @@ if [ -z "$OBJECT_ADDRESS" ]; then
     exit 1
 fi
 
-# Compile the contract
-echo "📝 Compiling Move modules..."
-COMPILE_RESULT=$(aptos move compile --named-addresses hello_blockchain=test-profile-2 2>&1) || {
-    echo "❌ Compilation failed: ${COMPILE_RESULT}"
-    exit 1
-}
-
 # Upgrade deployed contract
 echo "📦 Upgrading contract..."
 UPGRADE_RESULT=$(aptos move upgrade-object \

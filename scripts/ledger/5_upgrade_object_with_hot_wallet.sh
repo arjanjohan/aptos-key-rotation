@@ -21,13 +21,6 @@ if [ -z "$OBJECT_ADDRESS" ]; then
     exit 1
 fi
 
-# Compile the contract
-echo "📝 Compiling Move modules..."
-COMPILE_RESULT=$(aptos move compile --named-addresses hello_blockchain=ledger-rotation-temp-hot 2>&1) || {
-    echo "❌ Compilation failed: ${COMPILE_RESULT}"
-    exit 1
-}
-
 # Upgrade deployed contract using temporary hot wallet
 echo "📦 Upgrading contract using temporary hot wallet..."
 
